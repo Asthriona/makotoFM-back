@@ -1,0 +1,20 @@
+{
+  "name": "cloudsdaleradio-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "nodemon start",
+    "start": "node start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34"
+  }
+}
