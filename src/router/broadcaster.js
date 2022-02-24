@@ -14,7 +14,7 @@ async function slow(req, res, next) {
 
 router.get('/', slow, (req,res) => {
     res.json({
-        data: '「CLOUDSDALERADIO」ブロードキャストAPI'
+        data: '「CLOUDSDALE RADIO」ブロードキャストAPI'
     });
 })
 
