@@ -5,8 +5,8 @@ const Config = require('../../config.json');
 
 //Routes files
 const broadcaster = require('./broadcaster.js');
-const nowPlaying = require('./nowPlaying.js');
-const radioData = require('./radioData.js');
+const nowPlaying = require('./nowplaying.js');
+const radioData = require('./radiodata.js');
 
 // Set routes
 router.use('/broadcaster', broadcaster);
