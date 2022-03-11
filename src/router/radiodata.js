@@ -10,7 +10,7 @@ router.get('/', (req,res) => {
 
 // GET list of station and location set as JP
 router.get('/stations', (req, res) => {
-    axios.get(`https://broadcaster.cloudsdaleradio.com/api/stations`)
+    axios.get(`https://${Config.radioAPI}/stations`)
     .then((resp) => {
         const data = resp.data[0];
         res.json({

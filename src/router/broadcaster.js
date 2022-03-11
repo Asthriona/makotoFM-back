@@ -19,7 +19,7 @@ router.get('/', slow, (req,res) => {
 })
 
 router.get('/relays', slow, (req, res) => {
-    axios.get(`https://broadcaster.cloudsdaleradio.com/api/station/1/`)
+    axios.get(`https://${Config.radioAPI}/station/1/`)
     .then((resp) => {
         const mounts = [];
         const data = resp.data;
@@ -52,7 +52,7 @@ router.get('/relays', slow, (req, res) => {
 });
 
 router.get('/request/:id', slow, (req, res) => {
-    axios.get(`https://broadcaster.cloudsdaleradio.com/api/station/${req.params.id}/requests`)
+    axios.get(`https://${Config.radioAPI}/station/${req.params.id}/requests`)
     .then(resp => {
         const data = resp.data;
         const requests = [];

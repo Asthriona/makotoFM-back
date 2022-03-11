@@ -20,8 +20,8 @@ router.get('/', (req, res) => {
         data: '「CLOUDSDALERADIO」プレーヤーデータ'
     });
 })
-router.get('/nowplaying', slow, (req, res) => {
-    axios.get(`https://broadcaster.cloudsdaleradio.com/api/nowplaying/1/`)
+router.get('/nowplaying', (req, res) => {
+    axios.get(`https://${Config.radioAPI}/nowplaying/1/`)
     .then(resp => {
         const data = resp.data;
         const np = data.now_playing.song;
@@ -49,7 +49,7 @@ router.get('/nowplaying', slow, (req, res) => {
     })
 });
 router.get('/playingnext', slow, (req, res) => {
-    axios.get(`https://broadcaster.cloudsdaleradio.com/api/nowplaying/1/`)
+    axios.get(`https://${Config.radioAPI}/nowplaying/1/`)
     .then(resp => {
         const data = resp.data;
         const np = data.playing_next.song;
@@ -78,7 +78,7 @@ router.get('/playingnext', slow, (req, res) => {
 });
 
 router.get('/history', slow, (req, res) => {
-    axios.get('https://broadcaster.cloudsdaleradio.com/api/nowplaying/1/')
+    axios.get(`https://${Config.radioAPI}/nowplaying/1/`)
     .then(resp => {
         const data = resp.data;
         const history = [];
