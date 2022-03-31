@@ -51,7 +51,7 @@ function getListeners() {
 }
 console.log(getListeners());
 router.get('/relays', slow, (req, res) => {
-    axios.get(`https://broadcaster.cloudsdaleradio.com/api/station/1`)
+    axios.get(`https://${Config.radioAPI}/station/1/`)
     .then((resp) => {
         const mounts = [];
         const data = resp.data;
