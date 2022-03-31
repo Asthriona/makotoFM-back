@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const axios = require('axios');
 const Config = require('../../config.json');
+const moment = require('moment');
 
 async function slow(req, res, next) {
     if(Config.prod == true) {
@@ -18,8 +19,39 @@ router.get('/', slow, (req,res) => {
     });
 })
 
+let listeners;
+let listeners_max = 500;
+let listeners_min = 0;
+let lastUdate
+
+function getListeners() {
+    // get last value cached
+    const last = listeners;
+    if(listeners == 0 || listeners == undefined) { listeners = Math.round(Math.random() * listeners_max) + listeners_min; }
+    // check if last update is more than 5mn
+    const now = moment();
+    const diff = now.diff(lastUdate, 'minutes');
+    if(diff > 5) {
+        // randomly add or remove to listeners
+        const rand = Math.round(Math.random() * 100);
+        if(rand > 50) {
+            listeners += Math.round(Math.random() * 20);
+            lastUdate = now;
+        } else {
+            listeners -= Math.round(Math.random() * 20);
+            lastUdate = now;
+        }
+        console.log(`Listeners: ${listeners}`);
+        return listeners;
+
+} else {
+    console.log(`Listeners: ${listeners}`);
+    return last;
+    }
+}
+console.log(getListeners());
 router.get('/relays', slow, (req, res) => {
-    axios.get(`https://${Config.radioAPI}/station/1/`)
+    axios.get(`https://broadcaster.cloudsdaleradio.com/api/station/1`)
     .then((resp) => {
         const mounts = [];
         const data = resp.data;
@@ -30,7 +62,7 @@ router.get('/relays', slow, (req, res) => {
                 url: data.mounts[i].url,
                 location: 'JP-jp',
                 bitrate: data.mounts[i].bitrate,
-                listeners: Math.floor(Math.random() * 500) + data.mounts[i].listeners.total,
+                listeners: getListeners() + data.mounts[i].listeners.total,
             });
         }
         for (let i = 0; i < data.remotes.length; i++) {
@@ -41,9 +73,10 @@ router.get('/relays', slow, (req, res) => {
                 url: data.remotes[i].url,
                 location: Name.startsWith('FR-relay-') || Name.startsWith('FR-Relay-')? 'FR-fr' : 'JP-jp',
                 bitrate: data.remotes[i].bitrate,
-                listeners: Math.floor(Math.random() * 500) + data.remotes[i].listeners.total,
+                listeners: getListeners() + data.remotes[i].listeners.total,
             });
         }
+        console.log(mounts);
         res.json(mounts);
     })
     .catch (err => {
