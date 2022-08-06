@@ -17,7 +17,7 @@ router.get('/', function (req, res) {
     res.json({
         message: '「CLOUDSDALE RADIO」APIへようこそ',
         staff: 'あなたはスタッフではないので、ここではビジネスを持っていません。ウェブサイトに戻ってください。',
-        hosting: 'カバー株式会社が主催',
+        hosting: '「ASTHRIONA」株式会社',
         version: 'v8.0.0',
         url: 'https://cloudsdaleradio.com/',
     });
