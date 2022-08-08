@@ -4,17 +4,6 @@ const moment = require('moment');
 const Config = require('../../config.json');
 const tz = require('moment-timezone');
 
-async function slow(req, res, next) {
-    // wait 240 ms before continuing to next route
-    if(Config.prod == true) {
-        const waitTime = Math.round(Math.random() * 100) + 240;
-    await new Promise(r => setTimeout(r, waitTime));
-    next();
-    } else {
-        next();
-    }
-}
-
 router.get('/', (req, res) => {
     res.json({
         data: '「CLOUDSDALERADIO」プレーヤーデータ'
@@ -36,26 +25,26 @@ router.get('/nowplaying', (req, res) => {
         })
     })
     .catch(err => {
-        console.log(err.message);
+        console.error(err.message);
         return res.json({ 
             isLive: false,
             isRequest: false,
             id: '',
-            title: 'Request Delayed. (Error 1018)',
+            title: `${err.message}`,
             artist: 'Cloudsdale Radio',
             album: '',
             art: '',
         })
     })
 });
-router.get('/playingnext', slow, (req, res) => {
+router.get('/playingnext', (req, res) => {
     axios.get(`https://${Config.radioAPI}/nowplaying/1/`)
     .then(resp => {
         const data = resp.data;
         const np = data.playing_next.song;
         res.json({
             isLive: data.live.is_live == true? {live: true, streamer_name: data.live.streamer_name} : false,
-            isRequest: data.is_request,
+            isRequest: np.is_request || false,
             id: np.id,
             title: np.title,
             artist: np.artist,
@@ -77,7 +66,7 @@ router.get('/playingnext', slow, (req, res) => {
     })
 });
 
-router.get('/history', slow, (req, res) => {
+router.get('/history', (req, res) => {
     axios.get(`https://${Config.radioAPI}/nowplaying/1/`)
     .then(resp => {
         const data = resp.data;
