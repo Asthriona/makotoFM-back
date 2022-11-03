@@ -10,7 +10,7 @@ router.get('/', (req,res) => {
 });
 
 router.get('/relays', (req, res) => {
-    axios.get(`https://${Config.radioAPI}/station/1/`)
+    axios.get(`${Config.radioAPI}/station/1/`)
     .then((resp) => {
         const mounts = [];
         const data = resp.data;
@@ -41,6 +41,38 @@ router.get('/relays', (req, res) => {
     .catch (err => {
         res.json(err.message);
     })
+});
+
+router.get('/status', async (req,res) => {
+    // Get the status of both relays https://frRelay.cloudsdaleradio.com/ and https://jp-broadcaster.cloudsdaleradio.com/
+    const frRelay = await axios.get('https://frRelay.cloudsdaleradio.com/status-json.xsl');
+    const jpRelay = await axios.get('https://jp-broadcaster.cloudsdaleradio.com/status-json.xsl');
+    const frRelayData = frRelay.data.icestats.source;
+    const jpRelayData = jpRelay.data.icestats.source;
+    const frRelayMounts = [];
+    const jpRelayMounts = [];
+    for (let i = 0; i < frRelayData.length; i++) {
+        frRelayMounts.push({
+            name: `${frRelayData[i].server_name} @ ${frRelayData[i].bitrate}`,
+            url: frRelayData[i].listenurl.replace('http://localhost:8000', 'https://frRelay.cloudsdaleradio.com'),
+            location: 'FR-fr',
+            bitrate: frRelayData[i].bitrate,
+            listeners: frRelayData[i].listeners,
+        });
+    }
+    for (let i = 0; i < jpRelayData.length; i++) {
+        jpRelayMounts.push({
+            name: `${jpRelayData[i].server_name} @ ${jpRelayData[i].bitrate}`,
+            url: jpRelayData[i].listenurl.replace('http://main-broadcaster.cloudsdaleradio.com:8000', 'https://jp-broadcaster.cloudsdaleradio.com'),
+            location: 'JP-jp',
+            bitrate: jpRelayData[i].bitrate,
+            listeners: jpRelayData[i].listeners,
+        });
+    }
+    res.json({
+        frRelay: frRelayMounts,
+        jpRelay: jpRelayMounts,
+    });
 });
 
 router.get('/request/:id', (req, res) => {
