@@ -30,10 +30,26 @@ router.get('/nowplaying', (req, res) => {
             isLive: false,
             isRequest: false,
             id: '',
-            title: `${err.message}`,
+            title: `エラーが発生しました。`,
             artist: 'Cloudsdale Radio',
             album: '',
             art: '',
+        })
+    })
+});
+// Rescue Stream meta data:
+router.get('/rescue', (req, res) => {
+    axios.get('https://frRelay.cloudsdaleradio.com/status-json.xsl')
+    .then((resp) => {
+        const data = resp.data.icestats.source[0];
+        res.json({
+            isLive: false,
+            isRequest: false,
+            id: '0',
+            title: data.title,
+            artist: data.artist,
+            album: '',
+            art: 'https://cdn.asthriona.com/i/2022/08/_pn_220815_0628AM07114.png',
         })
     })
 });
