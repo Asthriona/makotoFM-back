@@ -46,8 +46,8 @@ router.get('/rescue', (req, res) => {
             isLive: false,
             isRequest: false,
             id: '0',
-            title: data.title,
-            artist: data.artist,
+            title: data.title || 'Rescue Stream',
+            artist: data.artist || null,
             album: '',
             art: 'https://cdn.asthriona.com/i/2022/08/_pn_220815_0628AM07114.png',
         })
