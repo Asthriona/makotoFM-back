@@ -10,7 +10,7 @@ router.get('/', (req,res) => {
 });
 
 router.get('/relays', (req, res) => {
-    axios.get(`${Config.radioAPI}/station/1/`)
+    axios.get(`${Config.radioHost}/api/station/1/`)
     .then((resp) => {
         const mounts = [];
         const data = resp.data;
