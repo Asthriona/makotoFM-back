@@ -12,26 +12,24 @@ router.get('/', (req,res) => {
 router.get('/stations', (req, res) => {
     axios.get(`https://${Config.radioAPI}/stations`)
     .then((resp) => {
-        const data = resp.data[0];
-        res.json({
-            station_count: 1,
-            1: {
-                id: data.id,
-                name: data.name,
-                shortcode: data.shortcode,
-                front: data.frontend,
-                back: data.backend,
-                location: 'Tokyo, JAPAN',
+        const data = resp.data;
+        let stations = [];
+        for (let i = 0; i < data.length; i++) {
+            stations.push({
+                id: data[i].id,
+                name: data[i].name,
+                shortcode: data[i].shortcode,
+                location: "Tokyo, Japan",
                 listen: {
-                    default: data.listen_url,
-                    pls: data.playlist_pls_url,
-                    m3u: data.playlist_m3u_url,
-                    mount_points: '/api/broadcaster/relays',
+                    default: data[i].listen_url,
+                    pls: data[i].playlist_pls_url,
+                    m3u: data[i].playlist_m3u_url,
+                    mount_points: "/api/broadcaster/relays",
                 },
-                isPublic: data.is_public,
-
-            }
-        })
+                isPublic: data[i].is_public,
+            });
+        };
+        res.json(stations);
     })
     .catch (err => {
         res.json(err.message);
