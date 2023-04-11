@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
     });
 })
 router.get('/nowplaying', (req, res) => {
-    axios.get(`${Config.radioAPI}/nowplaying/1/`)
+    axios.get(`${Config.radioHost}/api/nowplaying/1/`)
     .then(resp => {
         const data = resp.data;
         const np = data.now_playing.song;
@@ -25,7 +25,7 @@ router.get('/nowplaying', (req, res) => {
         })
     })
     .catch(err => {
-        console.error(err.message);
+        console.error(err);
         return res.json({ 
             isLive: false,
             isRequest: false,
@@ -54,7 +54,7 @@ router.get('/rescue', (req, res) => {
     })
 });
 router.get('/playingnext', (req, res) => {
-    axios.get(`${Config.radioAPI}/nowplaying/1/`)
+    axios.get(`${Config.radioHost}/api/nowplaying/1/`)
     .then(resp => {
         const data = resp.data;
         const np = data.playing_next.song;
@@ -83,7 +83,7 @@ router.get('/playingnext', (req, res) => {
 });
 
 router.get('/history', (req, res) => {
-    axios.get(`${Config.radioAPI}/nowplaying/1/`)
+    axios.get(`${Config.radioHost}/api/nowplaying/1/`)
     .then(resp => {
         const data = resp.data;
         const history = [];
@@ -99,6 +99,12 @@ router.get('/history', (req, res) => {
             })
         });
         res.json(history);
+    })
+    .catch((err) => {
+        console.log(err);
+        return res.status(500).json({
+            error: 'Internal Server Error'
+        });
     })
 });
 
