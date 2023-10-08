@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
     });
 })
 router.get('/nowplaying', (req, res) => {
-    axios.get(`${Config.radioHost}/api/nowplaying/1/`)
+    axios.get(`${Config.radioHost}/api/nowplaying/3/`)
     .then(resp => {
         const data = resp.data;
         const np = data.now_playing.song;
@@ -31,7 +31,7 @@ router.get('/nowplaying', (req, res) => {
             isRequest: false,
             id: '',
             title: `エラーが発生しました。`,
-            artist: 'Cloudsdale Radio',
+            artist: 'Sora Media Network',
             album: '',
             art: '',
         })
