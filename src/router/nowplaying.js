@@ -56,7 +56,7 @@ router.get('/rescue', (req, res) => {
     })
 });
 router.get('/playingnext', (req, res) => {
-    axios.get(`${Config.radioHost}/api/nowplaying/1/`)
+    axios.get(`${Config.radioHost}/api/nowplaying/${req.query.sid || 1}/`)
     .then(resp => {
         const data = resp.data;
         const np = data.playing_next.song;
@@ -68,6 +68,8 @@ router.get('/playingnext', (req, res) => {
             artist: np.artist,
             album: np.album,
             art: np.art,
+            played_at: moment(data.playing_next.played_at * 1000).tz('Asia/Tokyo'),
+            played_ago: moment(data.playing_next.played_at * 1000).fromNow(),
         })
     })
     .catch(err => {
@@ -85,7 +87,7 @@ router.get('/playingnext', (req, res) => {
 });
 
 router.get('/history', (req, res) => {
-    axios.get(`${Config.radioHost}/api/nowplaying/1/`)
+    axios.get(`${Config.radioHost}/api/nowplaying/${req.query.sid || 1}/`)
     .then(resp => {
         const data = resp.data;
         const history = [];
@@ -97,6 +99,7 @@ router.get('/history', (req, res) => {
                 album: played.song.album,
                 art: played.song.art,
                 played_at: moment(played.played_at * 1000).tz('Asia/Tokyo'),
+                played_ago: moment(played.played_at * 1000).fromNow(),
                 requested: played.is_request
             })
         });
