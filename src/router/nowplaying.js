@@ -5,20 +5,45 @@ const Config = require('../../config.json');
 const tz = require('moment-timezone');
 
 router.get('/', (req, res) => {
-    res.json({
-        data: '「CLOUDSDALERADIO」プレーヤーデータ'
-    });
+    axios.get(`${Config.radioAPI}stations`)
+    .then((resp) => {
+        const stations = [];
+        const data = resp.data;
+        data.forEach(s => {
+            stations.push({
+                stationId: s.id,
+                name: s.name,
+                shortcode: s.shortcode,
+                description: s.description,
+                frontend: s.frontend,
+                backend: s.backend,
+            });
+        });
+        res.json({
+            data: '「CLOUDSDALERADIO」プレーヤーデータ',
+            information: "Each broadcaster may host multiple stations, to get a specific station, please use a query such as '?sid=1', if no option is passed the default is station 1.",
+            stations,
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+            message: "Something went wrong.",
+            err: err.message,
+        })
+    })
 })
 router.get('/nowplaying', (req, res) => {
-    axios.get(`${Config.radioHost}/api/nowplaying/3/`)
+    axios.get(`${Config.radioHost}/api/nowplaying/${req.query.sid || 1}/`)
         .then(resp => {
             const data = resp.data;
             const np = data.now_playing.song;
             const next = data.playing_next.song
             res.json({
                 now: {
+                    stationId: data.station.id,
                     isLive: data.live.is_live == true ? { live: true, streamer_name: data.live.streamer_name } : false,
-                    isRequest: data.is_request,
+                    isRequest: data.is_request || false,
                     id: np.id,
                     title: np.title,
                     artist: np.artist,
@@ -26,6 +51,7 @@ router.get('/nowplaying', (req, res) => {
                     art: np.art,
                 },
                 next: {
+                    stationId: data.station.id,
                     isLive: data.live.is_live == true ? { live: true, streamer_name: data.live.streamer_name } : false,
                     isRequest: next.is_request || false,
                     id: next.id,
@@ -41,6 +67,7 @@ router.get('/nowplaying', (req, res) => {
         .catch(err => {
             console.error(err);
             return res.json({
+                stationId: 0,
                 isLive: false,
                 isRequest: false,
                 id: '',
@@ -75,6 +102,7 @@ router.get('/playingnext', (req, res) => {
             const data = resp.data;
             const np = data.playing_next.song;
             res.json({
+                stationId: data.station.id,
                 isLive: data.live.is_live == true ? { live: true, streamer_name: data.live.streamer_name } : false,
                 isRequest: np.is_request || false,
                 id: np.id,
@@ -107,6 +135,7 @@ router.get('/history', (req, res) => {
             const history = [];
             data.song_history.forEach(played => {
                 history.push({
+                    stationId: data.station.id,
                     id: played.song.id,
                     title: played.song.title,
                     artist: played.song.artist,
@@ -114,7 +143,7 @@ router.get('/history', (req, res) => {
                     art: played.song.art,
                     played_at: moment(played.played_at * 1000).tz('Asia/Tokyo'),
                     played_ago: moment(played.played_at * 1000).fromNow(),
-                    requested: played.is_request
+                    isRequest: played.is_request
                 })
             });
             res.json(history);

@@ -5,7 +5,7 @@ const moment = require('moment');
 
 router.get('/', (req,res) => {
     res.json({
-        data: '「CLOUDSDALE RADIO」ブロードキャストAPI'
+        data: '「Sora Media Network」ブロードキャストAPI'
     });
 });
 
@@ -75,8 +75,9 @@ router.get('/status', async (req,res) => {
     });
 });
 
+// Get list of requestable songs.
 router.get('/request/:id', (req, res) => {
-    axios.get(`https://${Config.radioAPI}/station/${req.params.id}/requests`)
+    axios.get(`${Config.radioAPI}/station/${req.params.id}/requests`)
     .then(resp => {
         const data = resp.data;
         const requests = [];
@@ -92,6 +93,15 @@ router.get('/request/:id', (req, res) => {
         }
         res.json(requests);
     })
-})
+});
+
+// Send new song request (WIP)
+// router.post('/request', (req,res) => {
+//     const { stationId, request_id, username } = req.body;
+//     axios.post(`${Config.radioAPI}/station/${stationId}/request/${request_id}`)
+//     .then((resp) => {
+
+//     })
+// })
 
 module.exports = router;
