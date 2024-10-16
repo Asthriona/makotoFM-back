@@ -40,6 +40,7 @@ router.get('/nowplaying', (req, res) => {
             const np = data.now_playing.song;
             const next = data.playing_next.song
             res.json({
+                listeners: resp.data.listeners.unique,
                 now: {
                     stationId: data.station.id,
                     isLive: data.live.is_live == true ? { live: true, streamer_name: data.live.streamer_name } : false,
